@@ -1,12 +1,99 @@
 // Объекты с данными для селектов в виде массивов объектов { name, description, baseConsumption, alarmConsumption, inputs, outputs, index }
+
+// Типы шлейфов и реле:
+// 0-Шлейф без питания
+// 1-Шлейф с питанием
+// 2-Реле питающее
+// 3-Сухой контакт
+
 const primeBoxes = [
     {
         name: "7453",
         description: "Контроль до 512 радиоканальных извещателей и 300 оповещателей Астра-Прайм через радиорасширители (868 МГц), до 100 безадресных ШС через модули ШС, 4 слота для установки модулей расширения, встроенный источник питания  ",
         baseConsumption:170,
         alarmConsumption:190,
-        inputs: ["Шлейф MCU1", "Шлейф MCU2", "Шлейф MCU3", "Шлейф MCU4"],
-        outputs: ["Реле MCU1", "Реле MCU2", "Реле MCU3", "ОК MCU4", "ОК MCU5", "ОК MCU6", "Реле БП1", "Реле БП2", "Реле БП3"],
+        inputs: [
+            {
+                name: "ШС MCU1",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:1
+            },
+            {
+                name: "ШС MCU2",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:1
+            },
+            {
+                name: "ШС MCU3",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:1
+            },
+            {
+                name: "ШС MCU4",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:1
+            },
+        ],
+        outputs: [
+            {
+                name: "Реле MCU1",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:2
+            },
+            {
+                name: "Реле MCU2",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:3
+            },
+            {
+                name: "Реле MCU3",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:3
+            },
+            {
+                name: "ОК MCU4",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:3
+            },
+            {
+                name: "ОК MCU5",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:3
+            },
+            {
+                name: "ОК MCU6",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:3
+            },
+            {
+                name: "Реле БП1",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:3
+            },
+            {
+                name: "Реле БП2",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:3
+            },
+            {
+                name: "Реле БП3",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:3
+            },
+        ],
         index:7453
     },
     {
@@ -15,7 +102,26 @@ const primeBoxes = [
         baseConsumption:70,
         alarmConsumption:95,
         inputs: [],
-        outputs: ["Реле БП1", "Реле БП2", "Реле БП3"],
+        outputs: [
+            {
+                name: "Реле БП1",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:3
+            },
+            {
+                name: "Реле БП2",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:3
+            },
+            {
+                name: "Реле БП3",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:3
+            },
+           ],
         index:8652
     },
     {
@@ -24,7 +130,26 @@ const primeBoxes = [
         baseConsumption:75,
         alarmConsumption:105,
         inputs: [],
-        outputs: ["Реле БП1", "Реле БП2", "Реле БП3"],
+        outputs: [
+            {
+                name: "Реле БП1",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:3
+            },
+            {
+                name: "Реле БП2",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:3
+            },
+            {
+                name: "Реле БП3",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:3
+            },
+        ],
         index:8452
     },
     {
@@ -62,7 +187,44 @@ const primeModules = [
         description:"Модуль расширения шлейфов сигнализации для установки в блоки системы Астра-Прайм, 6 программируемых ШС" ,
         baseConsumption:133,
         alarmConsumption:142,
-        inputs: ["Шлейф 1", "Шлейф 2", "Шлейф 3", "Шлейф 4", "Шлейф 5", "Шлейф 6"],
+        inputs: [
+            {
+                name: "ШС1",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:1
+            },
+            {
+                name: "ШС2",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:1
+            },
+            {
+                name: "ШС3",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:1
+            },
+            {
+                name: "ШС4",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:1
+            },
+            {
+                name: "ШС5",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:1
+            },
+            {
+                name: "ШС6",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:1
+            },
+        ],
         outputs: [],
         index:8352
     },

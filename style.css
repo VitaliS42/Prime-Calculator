@@ -52,6 +52,7 @@ select {
 .input-row {
     display: flex;
     align-items: center;
+    height: 33px;
 }
 .row-title {
     width: 195px;
@@ -81,4 +82,7 @@ select {
     max-width: 350px;
     background-color: #006640;
     color: white;
+}
+.summary-string {
+    padding-top: 15px;
 }

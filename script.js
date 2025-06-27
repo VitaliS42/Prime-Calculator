@@ -11,6 +11,12 @@ const modulesContainer = document.getElementById('modulesContainer');
 const totalConsumptionSpan = document.getElementById('totalConsumption');
 const totalAlarmSpan = document.getElementById('totalAlarmConsumption');
 const batteryValueSpan = document.getElementById('batteryValue');
+const moduleMappings = [
+    { property: devicesList.firstModule, maxLength: 0 },
+    { property: devicesList.secondModule, maxLength: 1 },
+    { property: devicesList.thirdModule, maxLength: 2 },
+    { property: devicesList.fourthModule, maxLength: 3 }
+];
 
 // Добавляем выбор базового бокса:
 if (boxContainer.children.length===0) {
@@ -22,13 +28,6 @@ if (boxContainer.children.length===0) {
 }
 
 // Добавляем выбор модулей:
-const moduleMappings = [
-    { property: devicesList.firstModule, maxLength: 0 },
-    { property: devicesList.secondModule, maxLength: 1 },
-    { property: devicesList.thirdModule, maxLength: 2 },
-    { property: devicesList.fourthModule, maxLength: 3 }
-];
-
 for (const { property, maxLength } of moduleMappings) {
     if (modulesContainer.children.length === maxLength) {
         const { wrapper, select } = createSelect(false);
@@ -37,30 +36,6 @@ for (const { property, maxLength } of moduleMappings) {
         updateTotals();
     }
 }
-// if (modulesContainer.children.length===0) {
-//     const {wrapper, select}= createSelect(false);
-//     updateChosenDevice(devicesList.firstModule, select.options[select.selectedIndex].value, primeModules);
-//     modulesContainer.appendChild(wrapper);
-//     updateTotals();
-// }
-// if (modulesContainer.children.length===1) {
-//     const {wrapper, select}= createSelect(false);
-//     updateChosenDevice(devicesList.secondModule, select.options[select.selectedIndex].value, primeModules);
-//     modulesContainer.appendChild(wrapper);
-//     updateTotals();
-// }
-// if (modulesContainer.children.length===2) {
-//     const {wrapper, select}= createSelect(false);
-//     updateChosenDevice(devicesList.thirdModule, select.options[select.selectedIndex].value, primeModules);
-//     modulesContainer.appendChild(wrapper);
-//     updateTotals();
-// }
-// if (modulesContainer.children.length===3) {
-//     const {wrapper, select}= createSelect(false);
-//     updateChosenDevice(devicesList.fourthModule, select.options[select.selectedIndex].value, primeModules);
-//     modulesContainer.appendChild(wrapper);
-//     updateTotals();
-// }
 
 // Функция создания дропа с отображением значения
 function createSelect(isBox) {
@@ -168,57 +143,12 @@ function updateSpecialCheckboxVisibility(deviceIndex) {
 }
 
 // Обновление входов - выходов доступных для настройки при выборе устройства
-// function updateIos(deviceType, options, targetContainer) {
-//     const foundElement = options.find(box => box.index === +deviceType);
-//     targetContainer.innerHTML=""
-//
-//     if (foundElement) {
-//         const { inputs, outputs } = foundElement;
-//
-//         if (inputs.length!==0 || outputs.length!==0) {
-//             // Создаем заголовок для таблицы входов - выходов
-//             const headerRow = document.createElement('div');
-//             headerRow.className = "header-row"
-//
-//             // Создаем блоки заголовков таблицы
-//             const discHeader = document.createElement('div');
-//             const nameHeader = document.createElement('div');
-//             const consumptionHeader = document.createElement('div');
-//             const alarmHeader = document.createElement('div');
-//             const qtyHeader = document.createElement('div');
-//
-//             // Добавляем их в строку
-//             headerRow.appendChild(discHeader);
-//             discHeader.innerText = "Вход/выход прибора"
-//             discHeader.className = "headerSpan"
-//             headerRow.appendChild(nameHeader);
-//             nameHeader.innerText = "Название устройства"
-//             nameHeader.className = "headerSpan"
-//             headerRow.appendChild(consumptionHeader);
-//             consumptionHeader.innerText = "Потребление Деж. мАч"
-//             consumptionHeader.className = "headerSpan"
-//             headerRow.appendChild(alarmHeader);
-//             alarmHeader.innerText = "Потребление Авар. мАч"
-//             alarmHeader.className = "headerSpan"
-//             headerRow.appendChild(qtyHeader);
-//             qtyHeader.innerText = "Количество"
-//             qtyHeader.className = "headerSpan"
-//
-//             targetContainer.appendChild(headerRow)
-//         }
-//
-//         inputs.forEach(input => addNewRow(targetContainer, input));
-//         outputs.forEach(output => addNewRow(targetContainer, output));
-//     }
-// }
 function updateIos(deviceType, options, targetContainer) {
     const foundElement = options.find(box => box.index === +deviceType);
     targetContainer.innerHTML = "";
-
     if (!foundElement || (foundElement.inputs.length === 0 && foundElement.outputs.length === 0)) {
         return;
     }
-
     const { inputs, outputs } = foundElement;
 
     // Создаем заголовок для таблицы
@@ -228,6 +158,7 @@ function updateIos(deviceType, options, targetContainer) {
     // Массив данных для заголовков
     const headers = [
         { text: "Вход/выход прибора", className: "headerSpan" },
+        { text: "Активно", className: "headerSpan" },
         { text: "Название устройства", className: "headerSpan" },
         { text: "Потребление Деж. мАч", className: "headerSpan" },
         { text: "Потребление Авар. мАч", className: "headerSpan" },
@@ -250,58 +181,98 @@ function updateIos(deviceType, options, targetContainer) {
 }
 
 // Функция добавления новой строки стороннего устройства
-function addNewRow(rowsContainer, stringName) {
+function addNewRow(rowsContainer, IOunit) {
     // Создаем контейнер для всей строки
     const rowDiv = document.createElement('div');
     rowDiv.className = 'input-row';
 
     // Создаем заголовок для всей строки
     const rowTitle = document.createElement('div');
-    rowTitle.textContent = stringName;
+    rowTitle.textContent = IOunit.name;
     rowTitle.className = 'row-title';
     rowDiv.appendChild(rowTitle);
+
+    // Создаем переменную активности строки и чекбокс для её изменения
+    let rowActive = false;
+    function createCheckBoxInput(IOunit) {
+        const container = document.createElement('div');
+        container.className = 'input-container';
+
+        const checkBox =  document.createElement('input');
+        checkBox.type = "checkBox";
+        checkBox.checked = false;
+        checkBox.dataset.consumption = IOunit.baseConsumption;
+        checkBox.dataset.alarm = IOunit.alarmConsumption;
+        checkBox.id=IOunit.name
+
+        container.appendChild(checkBox);
+
+        return container;
+    }
 
     // Функция для создания блока с меткой и input
     function createLabeledInput(labelText, inputType, placeholder, defaultValue, min= null, max= null) {
         const container = document.createElement('div');
         container.className = 'input-container';
 
-        // const label = document.createElement('div');
-        // label.textContent = labelText;
-        // label.className = 'input-label';
-
         const input = document.createElement('input');
         input.type = inputType;
         input.placeholder = placeholder;
-        input.defaultValue = defaultValue
+        if (input.type === "number") {
+            input.defaultValue = defaultValue;
+        }
+        input.disabled = !rowActive;
         if (inputType === "number") input.className = 'input-number';
         if (inputType === "text") input.className = 'input-text';
 
         if (min !== null) input.min = min;
         if (max !== null) input.max = max;
 
-        // container.appendChild(label);
         container.appendChild(input);
 
         return container;
     }
 
     // Создаем блоки с метками и инпутами
+    const checkBoxField = createCheckBoxInput(IOunit)
     const nameField = createLabeledInput('Устройство', 'text', 'Устройство', "Название устройства");
-    const consumptionField = createLabeledInput('Потребление Деж. мАч', 'number', 'Потребление Деж. мАч', 0);
-    const alarmField = createLabeledInput('Потребление Авар. мАч', 'number', 'Потребление Авар. мАч', 0);
+    const consumptionField = createLabeledInput('Потребление Деж. мАч', 'number', 'Потребление Деж. мАч', 0, 0, 1000);
+    const alarmField = createLabeledInput('Потребление Авар. мАч', 'number', 'Потребление Авар. мАч', 0, 0, 1000);
     const qtyField = createLabeledInput('Количество', 'number', 'Количество', 0, 0, 100);
 
     // Добавляем их в строку
-    rowDiv.appendChild(nameField);
-    rowDiv.appendChild(consumptionField);
-    rowDiv.appendChild(alarmField);
-    rowDiv.appendChild(qtyField);
+    rowDiv.appendChild(checkBoxField);
+    if (IOunit.type === 1 || IOunit.type === 2){
+        rowDiv.appendChild(nameField);
+        rowDiv.appendChild(consumptionField);
+        rowDiv.appendChild(alarmField);
+        rowDiv.appendChild(qtyField);
+    }
 
     // Добавляем строку в контейнер
     rowsContainer.appendChild(rowDiv);
 
     // Добавляем обработчики событий для обновления сумм при изменении значений
+    checkBoxField.addEventListener('change', () => {
+        let fields = rowDiv.querySelectorAll('input:not([type="checkbox"])')
+        rowActive = !rowActive;
+        if (rowActive) {
+            fields.forEach((input,index) => {
+                input.disabled = false;
+            });
+        } else {
+            fields.forEach((input,index) => {
+                input.disabled = true;
+                if (input.type === "number") {
+                    input.value = input.defaultValue
+                }
+                else {
+                    input.value = null
+                }
+            });
+        }
+        updateTotals()
+    });
     consumptionField.addEventListener('input', updateTotals);
     alarmField.addEventListener('input', updateTotals);
     qtyField.addEventListener('input', updateTotals);
@@ -334,7 +305,7 @@ function updateTotals() {
     });
 
     // Собираем все чекбоксы и следим за изменениями в них
-    const checkboxes = checkboxesContainer.querySelectorAll('input[type=checkbox]');
+    const checkboxes = document.querySelectorAll('input[type=checkbox]');
     checkboxes.forEach(cb => {
         cb.addEventListener('change', () => {
             updateTotals();
@@ -352,11 +323,14 @@ function updateTotals() {
     // Суммируем данные из строк, введенных вручную
     const rows = document.querySelectorAll('.input-row');
     rows.forEach(row => {
-        const inputs = row.querySelectorAll('input');
-        const consumptionVal = (parseInt(inputs[1].value) * parseInt(inputs[3].value)) || 0;
-        const alarmVal = (parseInt(inputs[2].value) * parseInt(inputs[3].value)) || 0;
-        totalConsumption+= consumptionVal;
-        totalAlarmConsumption+= alarmVal;
+        const inputs = row.querySelectorAll('input[type=number]');
+        if (inputs.length > 0) {
+            const consumptionVal = (parseInt(inputs[0].value) || 0) * (parseInt(inputs[2].value) || 0);
+            const alarmVal = (parseInt(inputs[1].value) || 0) * (parseInt(inputs[2].value) || 0);
+
+            totalConsumption += consumptionVal;
+            totalAlarmConsumption += alarmVal;
+        }
     });
 
     batteryValue = ((totalConsumption*24) + (totalAlarmConsumption)) /1000;
@@ -365,5 +339,3 @@ function updateTotals() {
     totalAlarmSpan.textContent= totalAlarmConsumption;
     batteryValueSpan.textContent = batteryValue.toString();
 }
-
-

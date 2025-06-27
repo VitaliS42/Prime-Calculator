@@ -1,398 +1,45 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <title>Калькулятор Астра-Прайм</title>
-    <style>
-        *{
-            padding: 0;
-            margin: 0;
-            font-size: 20px;
-        }
-        html, body {
-            height: 100%;
-        }
-        body {
-            background-color: #c3c3c3;
-        }
-        .container {
-            padding: 20px;
-            background-color: #c3c3c3;
-            height: auto;
-        }
-        button {
-            padding: 2px 10px;
-            margin: 0 10px;
-            border-radius: 67px;
-            background: #006640;
-            border-color: transparent;
-            color: white;
-        }
-        button:hover {
-            background: #01784c;
-            cursor: pointer;
-        }
-        input {
-            margin: 5px;
-            padding: 5px 10px;
-            border-radius: 20px;
-        }
-        select {
-            padding: 3px 10px;
-            border-radius: 20px;
-            background-color: #006640;
-            color: white;
-            cursor: pointer;
-        }
-        h4 {
-            padding: 10px 0;
-        }
-
-        .boxSection {
-
-        }
-        .boxSection-flex {
-            display: flex;
-            align-items: center;
-        }
-        .modulesSection {
-
-        }
-        .sensorsSection {
-
-        }
-        .summarySection {
-            margin-top: 20px;
-        }
-        .input-row {
-            margin-bottom: 10px;
-        }
-        .select-wrapper {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-        .value-display {
-            margin-left: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="values.js"></script>
+    <script type="module" src="script.js"></script>
 </head>
 <body>
-<div class="container">
-    <h1>Рассчет потребления индивидуального корпуса системы Астра-прайм</h1>
-    <div class="boxSection">
-        <h4>Базовое устройство</h4>
-        <div class="boxSection-flex">
-            <div id="imageContainer">
-                <img id="dynamicImage" src="7453.png" alt="Динамическое изображение" width="300" />
+    <div class="container">
+        <section class="boxSection">
+            <h4>Базовый модуль</h4>
+            <div class="boxSection-flex">
+                <div class="boxSection-display">
+                    <img id="dynamicBoxImage" src="7453.jpg" alt="Динамическое изображение" height="300"/>
+                    <div class="checkbox-group" id="checkboxesContainer">
+                        <!-- Специальный чекбокс -->
+                        <label id="dongleCheckBoxLabel" style="display:none;">
+                            <input type="checkbox" id="dongleCheckBox"
+                                   data-consumption="1000"
+                                   data-alarm="2000" /> Используется Астра-Прайм-8851
+                        </label>
+                        <label id="extenderCheckBoxLabel" style="display:none;">
+                            <input type="checkbox" id="extenderCheckBox"
+                                   data-consumption="50"
+                                   data-alarm="100" /> Используется Астра-Прайм-8652-08
+                        </label>
+                    </div>
+                </div>
+                <div id="boxContainer"></div>
             </div>
-            <div id="boxContainer"></div>
-        </div>
+        </section>
+        <section class="modulesSection">
+            <h4>Выбор модулей</h4>
+            <div id="modulesContainer"></div>
+        </section>
+        <section class="summarySection">
+            <p>Общее потребление: <span id="totalConsumption">0</span> мАч</p>
+            <p>Общее потребление в тревоге: <span id="totalAlarmConsumption">0</span> мАч</p>
+            <p class="summary-string">Емкость необходимая для работы 24ч в дежурном режиме + 1 час в тревожном: <span id="batteryValue">0</span> Ач</p>
+        </section>
     </div>
-
-    <div class="modulesSection">
-        <h4>Модули</h4>
-        <div class="modulesContainer" id="modulesContainer"></div>
-        <button id="addSelectBtn">Добавить модуль</button>
-
-        <h4>Дополнительные опции:</h4>
-        <div class="checkbox-group" id="checkboxesContainer">
-            <label>
-                <input type="checkbox"
-                       data-consumption="5"
-                       data-alarm="15" /> Доп.оборудование: Деж./Трев +5/10мАч
-            </label><br/>
-
-            <!-- Специальный чекбокс -->
-            <label id="specialCheckboxLabel" style="display:none;">
-                <input type="checkbox" id="specialCheckbox"
-                       data-consumption="50"
-                       data-alarm="100" /> Используются шлейфа MCU (Деж./Трев +50/1000мАч)
-            </label>
-        </div>
-    </div>
-
-    <div class="sensorsSection">
-        <h4>Датчики и сторонние приборы</h4>
-        <button id="addRowBtn">Добавить датчики или сторонние устройства</button>
-        <div id="rowsContainer"></div>
-    </div>
-
-    <div class="summarySection">
-        <h2>Общее потребление: <span id="totalConsumption">0</span> мАч</h2>
-        <h2>Общее потребление в тревоге: <span id="totalAlarmConsumption">0</span> мАч</h2>
-        <h2>Емкость необходимая для работы 24ч в дежурном режиме + 1 час в тревожном: <span id="batteryValue">0</span> Ач</h2>
-    </div>
-
-</div>
-
-
-<script>
-    // Объекты с данными для селектов в виде массивов объектов { name, consumption, alarmConsumption }
-    const firstOptionsData = [
-        { name: "7453", consumption:170, alarmConsumption:190, index:7453 },
-        { name: "8652", consumption:70, alarmConsumption:95, index:8652 },
-        { name: "8452", consumption:75, alarmConsumption:105, index:8452 },
-        { name: "8752", consumption:75, alarmConsumption:105, index:8752 }
-    ];
-
-    const optionsData = [
-        { name:"8552", consumption:11, alarmConsumption:13, index:8552 },
-        { name:"8352", consumption:133, alarmConsumption:142, index:8352 },
-        { name:"8452-06", consumption:15, alarmConsumption:17, index:845206 },
-        { name:"8252", consumption:17, alarmConsumption:20, index:8252 },
-        { name:"7052", consumption:25, alarmConsumption:30, index:7052 },
-        { name:"8652-8", consumption:50, alarmConsumption:55, index:86528 },
-    ];
-
-    // Пути к изображениям для разных значений dynamicVariable
-    const imagesMap = {
-        7453: "7453.png",
-        8652: "8652.png",
-        8452: "8452.png",
-        8752: "8752.png"
-    };
-
-    // Получаем контейнеры и элементы
-    const boxContainer = document.getElementById('boxContainer');
-    const modulesContainer = document.getElementById('modulesContainer');
-    const addButton = document.getElementById('addSelectBtn');
-    const totalConsumptionSpan = document.getElementById('totalConsumption');
-    const totalAlarmSpan = document.getElementById('totalAlarmConsumption');
-    const checkboxesContainer = document.getElementById('checkboxesContainer');
-    const specialCheckboxLabel = document.getElementById('specialCheckboxLabel');
-    const specialCheckbox = document.getElementById('specialCheckbox');
-    const dynamicImage = document.getElementById('dynamicImage');
-    const batteryValueSpan = document.getElementById('batteryValue');
-
-    let dynamicVariable = 7453; // переменная, меняющаяся в зависимости от выбранного корпуса
-
-    // Создаем селект с кнопкой удаления и отображением значения
-    function createSelectWithRemove(isFirst) {
-        const wrapper= document.createElement('div');
-        wrapper.className='select-wrapper';
-
-        const select= document.createElement('select');
-
-        const dataSource= isFirst ? firstOptionsData : optionsData;
-
-        // Заполняем селект данными из массива объектов
-        dataSource.forEach(item => {
-            const option= document.createElement('option');
-            option.textContent= item.name;
-            option.value= item.consumption; // используем consumption как значение
-            option.setAttribute('data-alarm', item.alarmConsumption); // добавляем data-атрибут для alarmConsumption
-            option.setAttribute('data-index', item.index); // добавляем data-атрибут для index
-            select.appendChild(option);
-        });
-
-        // Элемент для отображения числового значения селекта
-        const valueDisplay= document.createElement('span');
-        valueDisplay.className='value-display';
-
-        // Изначально устанавливаем значение
-        valueDisplay.textContent= "Потребление в дежурном/тревожном режиме "+ select.options[select.selectedIndex].value + "-" + select.options[select.selectedIndex].dataset.alarm + "мАч" ;
-
-        // Обработчик изменения селекта
-        select.addEventListener('change', () => {
-            // Обновляем отображение значения
-            valueDisplay.textContent= "Потребление в дежурном/тревожном режиме "+ select.options[select.selectedIndex].value + "-" + select.options[select.selectedIndex].dataset.alarm + "мАч" ;
-
-            // Обновляем переменную и изображение только для первого селекта
-            if (boxContainer.firstChild===wrapper) {
-                updateDynamicVariable(select.options[select.selectedIndex].dataset.index);
-                updateImage();
-                updateSpecialCheckboxVisibility();
-            }
-            updateTotals();
-        });
-
-        wrapper.appendChild(select);
-        wrapper.appendChild(valueDisplay);
-
-        if (!isFirst) {
-            const removeBtn = document.createElement('button');
-            removeBtn.textContent='Удалить';
-            removeBtn.addEventListener('click', () => {
-                modulesContainer.removeChild(wrapper);
-                updateTotals();
-            });
-            wrapper.appendChild(removeBtn);
-        }
-
-        return {wrapper, select, valueDisplay};
-    }
-
-    // Обновление переменной в зависимости от выбранного значения первого селекта
-    function updateDynamicVariable(value) {
-        dynamicVariable = value;
-    }
-
-    // Обновление изображения в зависимости от dynamicVariable
-    function updateImage() {
-        const src= imagesMap[dynamicVariable];
-        dynamicImage.src = src ? src : '';
-    }
-
-    // Обновление видимости специального чекбокса
-    function updateSpecialCheckboxVisibility() {
-        const firstSelectWrapper= boxContainer.children[0];
-        if (!firstSelectWrapper) return;
-
-        const firstSelect = firstSelectWrapper.querySelector('select');
-
-        if (firstSelect && firstSelect.options[firstSelect.selectedIndex].dataset.index ==="7453") {
-            specialCheckboxLabel.style.display='block';
-        } else {
-            specialCheckbox.checked=false;
-            specialCheckboxLabel.style.display='none';
-        }
-    }
-
-    // Получение данных выбранного варианта селекта (consumption и alarmConsumption)
-    function getSelectedOptionData(select) {
-        const selectedOption = select.options[select.selectedIndex];
-        const consumption = parseInt(selectedOption.value,10);
-        const alarmConsumptionStr = selectedOption.getAttribute('data-alarm');
-        const alarmConsumption = parseInt(alarmConsumptionStr,10);
-        return { consumption, alarmConsumption };
-    }
-
-    // Обновление всех сумм и итогов
-    function updateTotals() {
-        let totalConsumption = 0;
-        let totalAlarmConsumption = 0;
-        let batteryValue = 0;
-        // Суммируем потребление всех модулей
-        const selects= document.querySelectorAll('select');
-
-        selects.forEach((sel,index) => {
-            const dataObj=getSelectedOptionData(sel);
-
-            totalConsumption+= dataObj.consumption;
-            totalAlarmConsumption+= dataObj.alarmConsumption;
-
-            if (index===0) {
-                updateDynamicVariable(sel.options[sel.selectedIndex].dataset.index);
-                updateImage();
-                updateSpecialCheckboxVisibility();
-            }
-        });
-        // Суммируем данные из чекбоксов
-        checkboxes.forEach(cb => {
-            if (cb.checked) {
-                totalConsumption+= parseInt(cb.getAttribute('data-consumption'),10);
-                totalAlarmConsumption+= parseInt(cb.getAttribute('data-alarm'),10);
-            }
-        });
-        // Суммируем данные из строк, введенных вручную
-        const rows = document.querySelectorAll('.input-row');
-
-        rows.forEach(row => {
-            const inputs = row.querySelectorAll('input');
-            const consumptionVal = (parseInt(inputs[1].value) * parseInt(inputs[3].value)) || 0;
-            const alarmVal = (parseInt(inputs[2].value) * parseInt(inputs[3].value)) || 0;
-
-            totalConsumption+= consumptionVal;
-            totalAlarmConsumption+= alarmVal;
-        });
-
-        batteryValue = ((totalConsumption*24) + (totalAlarmConsumption)) /1000;
-        // Обновляем отображения:
-        totalConsumptionSpan.textContent= totalConsumption;
-        totalAlarmSpan.textContent= totalAlarmConsumption;
-        batteryValueSpan.textContent = batteryValue.toString();
-
-        updateSpecialCheckboxVisibility();
-    }
-
-    // Обработчик добавления нового селекта
-    addButton.addEventListener('click', () => {
-        const {wrapper, select}= createSelectWithRemove(false);
-        modulesContainer.appendChild(wrapper);
-        updateTotals();
-    });
-
-    // Обработчики чекбоксов кроме специального
-    const checkboxes = checkboxesContainer.querySelectorAll('input[type=checkbox]');
-    checkboxes.forEach(cb => {
-        cb.addEventListener('change', () => {
-            updateTotals();
-        });
-    });
-
-    // Обработчик для специального чекбокса чтобы он не мешал при скрытии:
-    specialCheckbox.addEventListener('change', () => {
-        updateTotals();
-    });
-
-    // Изначально добавим селект бокса:
-    if (boxContainer.children.length===0) {
-        const {wrapper, select}= createSelectWithRemove(true);
-        boxContainer.appendChild(wrapper);
-        updateDynamicVariable(select.options[select.selectedIndex].dataset.index);
-        updateImage();
-        updateSpecialCheckboxVisibility();
-        updateTotals()
-    }
-
-    // Обработчик кнопки добавления строки
-    document.getElementById('addRowBtn').addEventListener('click', addNewRow);
-
-    // Функция добавления новой строки
-    function addNewRow() {
-        const container = document.getElementById('rowsContainer');
-
-        // Создаем элемент div для строки
-        const rowDiv = document.createElement('div');
-        rowDiv.className = 'input-row';
-
-        // Создаем поля ввода
-        const nameInput = document.createElement('input');
-        nameInput.type = 'text';
-        nameInput.placeholder = 'Устройство';
-
-        const consumptionInput = document.createElement('input');
-        consumptionInput.type = 'number';
-        consumptionInput.placeholder = 'Потребление Деж. мАч';
-
-        const alarmInput = document.createElement('input');
-        alarmInput.type = 'number';
-        alarmInput.placeholder = 'Потребление Авар. мАч';
-
-        const qtyInput = document.createElement('input');
-        qtyInput.type = 'number';
-        qtyInput.placeholder = 'Количество';
-        qtyInput.min = 0;
-        qtyInput.max = 100;
-        // alarmInput.defaultValue = 1;
-
-        // Кнопка удаления строки
-        const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = 'Удалить';
-
-        // Добавляем обработчики событий для обновления сумм при изменении значений
-        consumptionInput.addEventListener('input', updateTotals);
-        alarmInput.addEventListener('input', updateTotals);
-        qtyInput.addEventListener('input', updateTotals);
-
-        // Обработчик удаления строки
-        deleteBtn.addEventListener('click', () => {
-            container.removeChild(rowDiv);
-            updateTotals()
-        });
-
-        // Собираем все элементы в строку
-        rowDiv.appendChild(nameInput);
-        rowDiv.appendChild(consumptionInput);
-        rowDiv.appendChild(alarmInput);
-        rowDiv.appendChild(qtyInput);
-        rowDiv.appendChild(deleteBtn);
-
-        container.appendChild(rowDiv);
-    }
-
-</script>
-
 </body>
 </html>
