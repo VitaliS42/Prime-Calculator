@@ -7,6 +7,8 @@ const dongleCheckBoxLabel = document.getElementById('dongleCheckBoxLabel');
 const dongleCheckBox = document.getElementById('dongleCheckBox');
 const extenderCheckBoxLabel = document.getElementById('extenderCheckBoxLabel');
 const extenderCheckBox = document.getElementById('extenderCheckBox');
+const powerCheckBoxLabel = document.getElementById('powerCheckBoxLabel');
+const powerCheckBox = document.getElementById('powerCheckBox');
 const modulesContainer = document.getElementById('modulesContainer');
 const totalConsumptionSpan = document.getElementById('totalConsumption');
 const totalAlarmSpan = document.getElementById('totalAlarmConsumption');
@@ -122,6 +124,8 @@ function updateImage(deviceIndex, imageVariable) {
 // Обновление видимости специального чекбокса в зависимости от прибора
 function updateSpecialCheckboxVisibility(deviceIndex) {
     const firstSelectWrapper= boxContainer.children[0];
+    const checkboxesContainer = document.getElementById('checkboxesContainer');
+    const checkboxes = checkboxesContainer.querySelectorAll('input[type=checkbox]');
     if (!firstSelectWrapper) return;
 
     const firstSelect = firstSelectWrapper.querySelector('select');
@@ -130,16 +134,26 @@ function updateSpecialCheckboxVisibility(deviceIndex) {
         dongleCheckBoxLabel.style.display='block';
         extenderCheckBox.checked=false;
         extenderCheckBoxLabel.style.display='none';
-    } else if (firstSelect && (deviceIndex ==="8452" || deviceIndex ==="8752")) {
+        powerCheckBox.checked=false;
+        powerCheckBoxLabel.style.display='none';
+    } else if (firstSelect && (deviceIndex ==="8452" || deviceIndex ==="8652")) {
         dongleCheckBox.checked=false;
         dongleCheckBoxLabel.style.display='none';
         extenderCheckBoxLabel.style.display='block';
-    } else {
+        powerCheckBox.checked=false;
+        powerCheckBoxLabel.style.display='none';
+    } else  {
         extenderCheckBox.checked=false;
         extenderCheckBoxLabel.style.display='none';
         dongleCheckBox.checked=false;
         dongleCheckBoxLabel.style.display='none';
+        powerCheckBoxLabel.style.display='block';
     }
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+        updateTotals();
+        });
+    });
 }
 
 // Обновление входов - выходов доступных для настройки при выборе устройства
@@ -306,11 +320,11 @@ function updateTotals() {
 
     // Собираем все чекбоксы и следим за изменениями в них
     const checkboxes = document.querySelectorAll('input[type=checkbox]');
-    checkboxes.forEach(cb => {
-        cb.addEventListener('change', () => {
-            updateTotals();
-        });
-    });
+    // checkboxes.forEach(cb => {
+    //     cb.addEventListener('change', () => {
+    //         updateTotals();
+    //     });
+    // });
 
     // Суммируем данные из чекбоксов
     checkboxes.forEach(cb => {
