@@ -2,6 +2,7 @@
     padding: 0;
     margin: 0;
     font-size: 18px;
+    text-decoration: none;
 }
 html, body {
     height: 100%;
@@ -14,7 +15,19 @@ input {
     padding: 2px 10px;
     border-radius: 20px;
 }
+input[type="checkbox"] {
+    cursor: pointer;
+    height: 18px;
+    width: 18px;
+}
 select {
+    padding: 3px 10px;
+    border-radius: 20px;
+    background-color: #006640;
+    color: white;
+    cursor: pointer;
+}
+button {
     padding: 3px 10px;
     border-radius: 20px;
     background-color: #006640;

@@ -93,8 +93,8 @@ function createSelect(isBox) {
         if (boxContainer.firstChild===wrapper) {
             updateChosenDevice("chosenBox", select.options[select.selectedIndex].value);
             updateImage(devicesList.chosenBox, dynamicBoxImage)
-            updateIos(devicesList.chosenBox, primeBoxes, IOsDisplay)
             updateSpecialCheckboxVisibility(select.options[select.selectedIndex].value);
+            resetModules()
         } else {
             updateIos(select.options[select.selectedIndex].value, primeModules, IOsDisplay )
         }
@@ -119,6 +119,7 @@ function updateChosenDevice(varName, value) {
 function updateImage(deviceIndex, imageVariable) {
     const image = imagesMap[+deviceIndex];
     imageVariable.src = image ? image : '';
+
 }
 
 // Обновление видимости специального чекбокса в зависимости от прибора
@@ -136,13 +137,25 @@ function updateSpecialCheckboxVisibility(deviceIndex) {
         extenderCheckBoxLabel.style.display='none';
         powerCheckBox.checked=false;
         powerCheckBoxLabel.style.display='none';
-    } else if (firstSelect && (deviceIndex ==="8452" || deviceIndex ==="8652")) {
+    } else if (firstSelect && deviceIndex ==="8452") {
         dongleCheckBox.checked=false;
         dongleCheckBoxLabel.style.display='none';
         extenderCheckBoxLabel.style.display='block';
         powerCheckBox.checked=false;
         powerCheckBoxLabel.style.display='none';
-    } else  {
+    } else if (firstSelect && deviceIndex ==="8652") {
+        dongleCheckBox.checked=false;
+        dongleCheckBoxLabel.style.display='none';
+        extenderCheckBox.checked=false;
+        extenderCheckBoxLabel.style.display='none';
+        powerCheckBox.checked=false;
+        powerCheckBoxLabel.style.display='none';
+    } else if (firstSelect && deviceIndex ==="8752") {
+        dongleCheckBox.checked=false;
+        dongleCheckBoxLabel.style.display='none';
+        extenderCheckBoxLabel.style.display='block';
+        powerCheckBoxLabel.style.display='block';
+    } else {
         extenderCheckBox.checked=false;
         extenderCheckBoxLabel.style.display='none';
         dongleCheckBox.checked=false;
@@ -153,6 +166,18 @@ function updateSpecialCheckboxVisibility(deviceIndex) {
         cb.addEventListener('change', () => {
         updateTotals();
         });
+    });
+}
+
+// Сброс селектов модулей в исходное состояние
+function resetModules() {
+    const selects = modulesContainer.querySelectorAll("select")
+    selects.forEach(select => {
+        if (select.options.length > 0) {
+            select.value = select.options[0].value;
+            const event = new Event('change', { bubbles: true });
+            select.dispatchEvent(event);
+        }
     });
 }
 
@@ -256,12 +281,16 @@ function addNewRow(rowsContainer, IOunit) {
 
     // Добавляем их в строку
     rowDiv.appendChild(checkBoxField);
-    if (IOunit.type === 1 || IOunit.type === 2){
-        rowDiv.appendChild(nameField);
-        rowDiv.appendChild(consumptionField);
-        rowDiv.appendChild(alarmField);
-        rowDiv.appendChild(qtyField);
-    }
+    // if (IOunit.type === 1 || IOunit.type === 2){
+    //     rowDiv.appendChild(nameField);
+    //     rowDiv.appendChild(consumptionField);
+    //     rowDiv.appendChild(alarmField);
+    //     rowDiv.appendChild(qtyField);
+    // }
+    rowDiv.appendChild(nameField);
+    rowDiv.appendChild(consumptionField);
+    rowDiv.appendChild(alarmField);
+    rowDiv.appendChild(qtyField);
 
     // Добавляем строку в контейнер
     rowsContainer.appendChild(rowDiv);
