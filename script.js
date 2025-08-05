@@ -94,11 +94,16 @@ function createSelect(isBox) {
             updateChosenDevice("chosenBox", select.options[select.selectedIndex].value);
             updateImage(devicesList.chosenBox, dynamicBoxImage)
             updateSpecialCheckboxVisibility(select.options[select.selectedIndex].value);
-            resetModules()
+            if (devicesList.chosenBox === "8752"||devicesList.chosenBox === "8652") {
+                resetModulesSpecial(1)
+            } else if (devicesList.chosenBox === "8452") {
+                resetModulesSpecial(3,1)
+            } else {
+                resetModules()
+            }
         } else {
             updateIos(select.options[select.selectedIndex].value, primeModules, IOsDisplay )
         }
-
         updateTotals()
     });
 
@@ -132,7 +137,7 @@ function updateSpecialCheckboxVisibility(deviceIndex) {
     const firstSelect = firstSelectWrapper.querySelector('select');
 
     if (firstSelect && deviceIndex ==="7453") {
-        dongleCheckBoxLabel.style.display='block';
+        dongleCheckBoxLabel.style.display='inline-flex';
         extenderCheckBox.checked=false;
         extenderCheckBoxLabel.style.display='none';
         powerCheckBox.checked=false;
@@ -140,7 +145,7 @@ function updateSpecialCheckboxVisibility(deviceIndex) {
     } else if (firstSelect && deviceIndex ==="8452") {
         dongleCheckBox.checked=false;
         dongleCheckBoxLabel.style.display='none';
-        extenderCheckBoxLabel.style.display='block';
+        extenderCheckBoxLabel.style.display='inline-flex';
         powerCheckBox.checked=false;
         powerCheckBoxLabel.style.display='none';
     } else if (firstSelect && deviceIndex ==="8652") {
@@ -153,8 +158,8 @@ function updateSpecialCheckboxVisibility(deviceIndex) {
     } else if (firstSelect && deviceIndex ==="8752") {
         dongleCheckBox.checked=false;
         dongleCheckBoxLabel.style.display='none';
-        extenderCheckBoxLabel.style.display='block';
-        powerCheckBoxLabel.style.display='block';
+        extenderCheckBoxLabel.style.display='inline-flex';
+        powerCheckBoxLabel.style.display='inline-flex';
     } else {
         extenderCheckBox.checked=false;
         extenderCheckBoxLabel.style.display='none';
@@ -180,6 +185,19 @@ function resetModules() {
         }
     });
 }
+// Сброс селектов модулей в исходное состояние, но можно указать им кастомные значения
+function resetModulesSpecial(moduleNumber1 = 0,moduleNumber2 = 0,moduleNumber3= 0,moduleNumber4= 0) {
+    const selects = modulesContainer.querySelectorAll("select")
+    selects[0].value = selects[0].options[moduleNumber1].value;
+    selects[1].value = selects[1].options[moduleNumber2].value;
+    selects[2].value = selects[0].options[moduleNumber3].value;
+    selects[3].value = selects[1].options[moduleNumber4].value;
+    const event = new Event('change', { bubbles: true });
+    selects[0].dispatchEvent(event);
+    selects[1].dispatchEvent(event);
+    selects[2].dispatchEvent(event);
+    selects[3].dispatchEvent(event);
+}
 
 // Обновление входов - выходов доступных для настройки при выборе устройства
 function updateIos(deviceType, options, targetContainer) {
@@ -200,7 +218,7 @@ function updateIos(deviceType, options, targetContainer) {
         { text: "Активно", className: "headerSpan" },
         { text: "Название устройства", className: "headerSpan" },
         { text: "Потребление Деж. мАч", className: "headerSpan" },
-        { text: "Потребление Авар. мАч", className: "headerSpan" },
+        { text: "Потребление Трев. мАч", className: "headerSpan" },
         { text: "Количество", className: "headerSpan" }
     ];
 
@@ -237,6 +255,9 @@ function addNewRow(rowsContainer, IOunit) {
         const container = document.createElement('div');
         container.className = 'input-container';
 
+        const label = document.createElement('label');
+        label.className = 'custom-checkbox';
+
         const checkBox =  document.createElement('input');
         checkBox.type = "checkBox";
         checkBox.checked = false;
@@ -244,7 +265,12 @@ function addNewRow(rowsContainer, IOunit) {
         checkBox.dataset.alarm = IOunit.alarmConsumption;
         checkBox.id=IOunit.name
 
-        container.appendChild(checkBox);
+        const checkboxIcon = document.createElement('span');
+        checkboxIcon.className = 'checkbox-icon';
+
+        container.appendChild(label);
+        label.appendChild(checkBox)
+        label.appendChild(checkboxIcon)
 
         return container;
     }
@@ -276,7 +302,7 @@ function addNewRow(rowsContainer, IOunit) {
     const checkBoxField = createCheckBoxInput(IOunit)
     const nameField = createLabeledInput('Устройство', 'text', 'Устройство', "Название устройства");
     const consumptionField = createLabeledInput('Потребление Деж. мАч', 'number', 'Потребление Деж. мАч', 0, 0, 1000);
-    const alarmField = createLabeledInput('Потребление Авар. мАч', 'number', 'Потребление Авар. мАч', 0, 0, 1000);
+    const alarmField = createLabeledInput('Потребление Трев. мАч', 'number', 'Потребление Трев. мАч', 0, 0, 1000);
     const qtyField = createLabeledInput('Количество', 'number', 'Количество', 0, 0, 100);
 
     // Добавляем их в строку

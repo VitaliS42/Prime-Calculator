@@ -100,7 +100,7 @@ const primeBoxes = [
         name: "8652",
         description: "Блок индикации и управления для системы Астра-Прайм, 32 индикатора и кнопок управления, считыватель RFID, встроенный источник питания",
         baseConsumption:70,
-        alarmConsumption:95,
+        alarmConsumption:105,
         inputs: [],
         outputs: [
             {
@@ -127,8 +127,8 @@ const primeBoxes = [
     {
         name: "8452",
         description: "Расширитель беспроводных зон для системы Астра-Прайм, частотный диапазон 868 МГц, обслуживание 70 радиоканальных извещателей и оповещателей, встроенный источник питания",
-        baseConsumption:75,
-        alarmConsumption:105,
+        baseConsumption:40,
+        alarmConsumption:60,
         inputs: [],
         outputs: [
             {
@@ -155,8 +155,8 @@ const primeBoxes = [
     {
         name: "8752",
         description: "Блок расширения устройств для системы Астра-Прайм, 4 слота для установки модулей расширения, возможность установки модуля источника питания",
-        baseConsumption:75,
-        alarmConsumption:105,
+        baseConsumption:35,
+        alarmConsumption:60,
         inputs: [],
         outputs: [],
         index:8752
@@ -239,11 +239,24 @@ const primeModules = [
     },
     {
         name:"8252",
-        description:" " ,
+        description:"Модуль реле" ,
         baseConsumption:17,
         alarmConsumption:20,
         inputs: [],
-        outputs: [],
+        outputs: [
+            {
+                name: "Реле 8252-1",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:3
+            },
+            {
+                name: "Реле 8252-2",
+                baseConsumption:5,
+                alarmConsumption:5,
+                type:3
+            },
+        ],
         index:8252
     },
     // {

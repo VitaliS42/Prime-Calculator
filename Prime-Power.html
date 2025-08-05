@@ -3,33 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <title>Калькулятор Астра-Прайм</title>
+    <link rel="icon" href="/logo.svg" type="image/svg+xml">
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <script type="module" src="values.js"></script>
     <script type="module" src="script.js"></script>
 </head>
 <body>
     <div class="container">
+        <div class="logo-container">
+            <img src="logo.svg" alt="Teko logotype">
+        </div>
         <section class="boxSection">
-            <h4>Базовый модуль</h4>
+            <h3>Базовый модуль</h3>
             <div class="boxSection-flex">
                 <div class="boxSection-display">
                     <img id="dynamicBoxImage" src="7453.jpg" alt="Динамическое изображение" height="300"/>
                     <div class="checkbox-group" id="checkboxesContainer">
                         <!-- Специальный чекбокс -->
-                        <label id="dongleCheckBoxLabel" style="display:none;">
-                            <input type="checkbox" id="dongleCheckBox"
-                                   data-consumption="1000"
-                                   data-alarm="2000" /> Используется Астра-Прайм-8851
+                        <label class="custom-checkbox" id="dongleCheckBoxLabel" style="display:none;">
+                            <input type="checkbox" id="dongleCheckBox"  data-consumption="1000" data-alarm="2000" />
+                            <span class="checkbox-icon"></span>
+                            <span class="checkbox-text">Используется Астра-Прайм-8851</span>
                         </label>
-                        <label id="powerCheckBoxLabel" style="display:none;">
-                            <input type="checkbox" id="powerCheckBox"
-                                   data-consumption="25"
-                                   data-alarm="30" /> Добавить Астра-Прайм-7052-01
+                        <label class="custom-checkbox" id="powerCheckBoxLabel" style="display:none;">
+                            <input type="checkbox" id="powerCheckBox"  data-consumption="25" data-alarm="30" />
+                            <span class="checkbox-icon"></span>
+                            <span class="checkbox-text">Добавить Астра-Прайм-7052-01</span>
                         </label>
-                        <label id="extenderCheckBoxLabel" style="display:none;">
-                            <input type="checkbox" id="extenderCheckBox"
-                                   data-consumption="50"
-                                   data-alarm="100" /> Используется Астра-Прайм-8652-08
+                        <label class="custom-checkbox" id="extenderCheckBoxLabel" style="display:none;">
+                            <input type="checkbox" id="extenderCheckBox"  data-consumption="50" data-alarm="100" />
+                            <span class="checkbox-icon"></span>
+                            <span class="checkbox-text">Используется Астра-Прайм-8652-08</span>
                         </label>
                     </div>
                     <button onclick="window.open(window.location.href, '_blank'); return false;">Рассчитать потребление еще 1 корпуса</button>
@@ -38,13 +45,13 @@
             </div>
         </section>
         <section class="modulesSection">
-            <h4>Выбор модулей</h4>
+            <h3>Выбор модулей</h3>
             <div id="modulesContainer"></div>
         </section>
         <section class="summarySection">
             <p>Общее потребление: <span id="totalConsumption">0</span> мАч</p>
             <p>Общее потребление в тревоге: <span id="totalAlarmConsumption">0</span> мАч</p>
-            <p class="summary-string">Емкость необходимая для работы 24ч в дежурном режиме + 1 час в тревожном: <span id="batteryValue">0</span> Ач</p>
+            <p class="summary-string">Ёмкость необходимая для работы 24ч в дежурном режиме + 1 час в тревожном: <span id="batteryValue">0</span> Ач</p>
         </section>
     </div>
 </body>
