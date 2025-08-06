@@ -99,7 +99,7 @@ function createSelect(isBox) {
             } else if (devicesList.chosenBox === "8452") {
                 resetModulesSpecial(3,1)
             } else {
-                resetModules()
+                resetModulesSpecial()
             }
         } else {
             updateIos(select.options[select.selectedIndex].value, primeModules, IOsDisplay )
@@ -136,36 +136,26 @@ function updateSpecialCheckboxVisibility(deviceIndex) {
 
     const firstSelect = firstSelectWrapper.querySelector('select');
 
-    if (firstSelect && deviceIndex ==="7453") {
-        dongleCheckBoxLabel.style.display='inline-flex';
-        extenderCheckBox.checked=false;
-        extenderCheckBoxLabel.style.display='none';
-        powerCheckBox.checked=false;
-        powerCheckBoxLabel.style.display='none';
-    } else if (firstSelect && deviceIndex ==="8452") {
-        dongleCheckBox.checked=false;
-        dongleCheckBoxLabel.style.display='none';
-        extenderCheckBoxLabel.style.display='inline-flex';
-        powerCheckBox.checked=false;
-        powerCheckBoxLabel.style.display='none';
-    } else if (firstSelect && deviceIndex ==="8652") {
-        dongleCheckBox.checked=false;
-        dongleCheckBoxLabel.style.display='none';
-        extenderCheckBox.checked=false;
-        extenderCheckBoxLabel.style.display='none';
-        powerCheckBox.checked=false;
-        powerCheckBoxLabel.style.display='none';
-    } else if (firstSelect && deviceIndex ==="8752") {
-        dongleCheckBox.checked=false;
-        dongleCheckBoxLabel.style.display='none';
-        extenderCheckBoxLabel.style.display='inline-flex';
-        powerCheckBoxLabel.style.display='inline-flex';
-    } else {
-        extenderCheckBox.checked=false;
-        extenderCheckBoxLabel.style.display='none';
-        dongleCheckBox.checked=false;
-        dongleCheckBoxLabel.style.display='none';
-        powerCheckBoxLabel.style.display='block';
+    if (firstSelect) {
+        dongleCheckBox.checked = false;
+        dongleCheckBoxLabel.style.display = 'none';
+        extenderCheckBox.checked = false;
+        extenderCheckBoxLabel.style.display = 'none';
+        powerCheckBox.checked = false;
+        powerCheckBoxLabel.style.display = 'none';
+
+        switch (deviceIndex) {
+            case "7453":
+                // dongleCheckBoxLabel.style.display = 'inline-flex';
+                break;
+            case "8452":
+                extenderCheckBoxLabel.style.display = 'inline-flex';
+                break;
+            case "8752":
+                extenderCheckBoxLabel.style.display = 'inline-flex';
+                powerCheckBoxLabel.style.display = 'inline-flex';
+                break;
+        }
     }
     checkboxes.forEach(cb => {
         cb.addEventListener('change', () => {
@@ -174,29 +164,17 @@ function updateSpecialCheckboxVisibility(deviceIndex) {
     });
 }
 
-// Сброс селектов модулей в исходное состояние
-function resetModules() {
-    const selects = modulesContainer.querySelectorAll("select")
-    selects.forEach(select => {
-        if (select.options.length > 0) {
-            select.value = select.options[0].value;
-            const event = new Event('change', { bubbles: true });
-            select.dispatchEvent(event);
-        }
-    });
-}
 // Сброс селектов модулей в исходное состояние, но можно указать им кастомные значения
-function resetModulesSpecial(moduleNumber1 = 0,moduleNumber2 = 0,moduleNumber3= 0,moduleNumber4= 0) {
-    const selects = modulesContainer.querySelectorAll("select")
-    selects[0].value = selects[0].options[moduleNumber1].value;
-    selects[1].value = selects[1].options[moduleNumber2].value;
-    selects[2].value = selects[0].options[moduleNumber3].value;
-    selects[3].value = selects[1].options[moduleNumber4].value;
-    const event = new Event('change', { bubbles: true });
-    selects[0].dispatchEvent(event);
-    selects[1].dispatchEvent(event);
-    selects[2].dispatchEvent(event);
-    selects[3].dispatchEvent(event);
+function resetModulesSpecial(...moduleNumbers) {
+    const selects = modulesContainer.querySelectorAll("select");
+
+    moduleNumbers = moduleNumbers.concat(Array(Math.max(0, selects.length - moduleNumbers.length)).fill(0));
+
+    selects.forEach((select, index) => {
+        const optionIndex = Math.min(moduleNumbers[index] || 0, select.options.length - 1);
+        select.value = select.options[optionIndex].value;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
 }
 
 // Обновление входов - выходов доступных для настройки при выборе устройства
@@ -307,12 +285,6 @@ function addNewRow(rowsContainer, IOunit) {
 
     // Добавляем их в строку
     rowDiv.appendChild(checkBoxField);
-    // if (IOunit.type === 1 || IOunit.type === 2){
-    //     rowDiv.appendChild(nameField);
-    //     rowDiv.appendChild(consumptionField);
-    //     rowDiv.appendChild(alarmField);
-    //     rowDiv.appendChild(qtyField);
-    // }
     rowDiv.appendChild(nameField);
     rowDiv.appendChild(consumptionField);
     rowDiv.appendChild(alarmField);
@@ -373,13 +345,8 @@ function updateTotals() {
         totalAlarmConsumption+= dataObj.alarmConsumption;
     });
 
-    // Собираем все чекбоксы и следим за изменениями в них
+    // Собираем все чекбоксы
     const checkboxes = document.querySelectorAll('input[type=checkbox]');
-    // checkboxes.forEach(cb => {
-    //     cb.addEventListener('change', () => {
-    //         updateTotals();
-    //     });
-    // });
 
     // Суммируем данные из чекбоксов
     checkboxes.forEach(cb => {
